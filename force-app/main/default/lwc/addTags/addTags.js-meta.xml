@@ -9,6 +9,8 @@
         <targetConfig targets='lightning__FlowScreen' category='sales'>
         <property name='tagpills' type="@salesforce/schema/Tag__c[]"/>
         <property name="searchLableList" type="string[]" label="Search Labels to add" description='List of search labels ids'  />
+        <propertyType name="T" extends="SObject" label="Input Type" description="Generic sObject data type used for input sObject properties" />
+          <property label="selected ids" name="selIdList"  type="{T[]}" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
