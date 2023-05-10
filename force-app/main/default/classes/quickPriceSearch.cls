@@ -19,29 +19,23 @@ public class quickPriceSearch {
     }
     
     @AuraEnabled(cacheable = true)
-    public static list<list<sObject>> searchTag(string searchKey){
-         //string searchterm = '%' + searchKey + '%'; 
+    public static list<tag__c> searchTag(string searchKey){
+         string searchterm = '%' + searchKey + '%'; 
          
-        //list<tag__c> tags = Database.query('select Id, Product_Name__c, ATS_Score__c, Tag_description__c from tag__c where Search_Slug_2__c like :searchterm order by ATS_Score__c desc nulls last'); 
-        //return tags; 
-        //list<tag__c> tagList = new list<Tag__c>();
-        String searchquery='FIND \''+searchKey+'\'IN ALL FIELDS RETURNING Tag__c(id, name, Search_Slug_2__c)'; 
-        
-		List<List<SObject>>searchList=search.query(searchquery);
-		//system.debug(searchList[0]);        
-        //list<Tag__c> tagList = new list((List<Tag__c)searchList[0]); 
-        return searchList;
+        list<tag__c> tags = Database.query('select Id, Product_Name__c, ATS_Score__c, Tag_description__c ' 
+                                           +' from tag__c where Search_Slug_2__c like :searchterm order by ATS_Score__c desc nulls last'); 
+        return tags; 
     }
     
         @AuraEnabled(cacheable = true)
     public static list<Tag__c> searchTagSOSL(string searchKey){
-         //string searchterm = '%' + searchKey + '%'; 
+         //string searchTerm = searchKey +' order by ATS_Score__c desc nulls last)'; 
         list<Tag__c> tagList = new list<Tag__c>();
         
-        String searchquery='FIND \''+searchKey+'\'IN ALL FIELDS RETURNING Tag__c(id, Tag_Description__c, Search_Slug_2__c,'
-            				+' Product__c, Product_Name__c, ATS_Score__c where product__r.IsActive = true)'; 
+        //String searchquery='FIND \''+searchKey+'\'IN ALL FIELDS RETURNING Tag__c(id, Tag_Description__c, Search_Slug_2__c,'
+            				//+' Product__c, Product_Name__c, ATS_Score__c where product__r.IsActive = true)'; 
         
-		List<List<SObject>>searchList=search.query(searchquery);
+		List<List<SObject>>searchList=search.query(searchKey);
 		       
         tagList = searchList[0]; 
         return tagList;
