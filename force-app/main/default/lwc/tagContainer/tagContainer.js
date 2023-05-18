@@ -48,7 +48,7 @@ export default class TagContainer extends LightningElement {
         }else{
             this.searchQuery = searchString(this.searchTerm, this.stock)
         }
-        console.log(this.searchQuery);
+       // console.log(this.searchQuery);
         
         this.loaded = false
         searchTag({ searchKey: this.searchQuery})
@@ -56,18 +56,23 @@ export default class TagContainer extends LightningElement {
             let name; 
             let score;
             let url;
-            let tagDesc
+            let tagDesc;
+            let status; 
             this.tagCards = res.map(x=>{
                
                 name = x.Product_Name__c,
                 score = x.ATS_Score__c
                 url = 'https://advancedturf--cpq.sandbox.lightning.force.com/lightning/r/Tag__c/'+x.Product__c+'/view'
                 tagDesc = x.Tag_Description__c
-                return {...x, name, score, url, tagDesc}
+                status = x.Stock_Status__c
+                return {...x, name, score, url, tagDesc, status}
             })
-            //console.log(res);
+
             this.loaded = true;
             const end = Date.now();
+            for(let i=0; i< res.length; i++){
+                console.log(res[i])
+            }
             console.log(`Execution time: ${end - start} ms`); 
         }).catch(err=>{
             console.log(err)
