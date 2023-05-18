@@ -1,7 +1,7 @@
 import { LightningElement,track } from 'lwc';
 import searchTag from '@salesforce/apex/quickPriceSearch.searchTagSOSL';
 import FORM_FACTOR from '@salesforce/client/formFactor';
-import {spellCheck, searchString} from 'c/tagHelper';
+import {spellCheck, quickSearchString} from 'c/tagHelper';
 const REGEX_SOSL_RESERVED = /(\?|&|\||!|\{|\}|\[|\]|\(|\)|\^|~|\*|:|"|\+|\\)/g;
 const REGEX_STOCK_RES = /(stock|sock|limited|limted|lmited|limit|close-out|close out|closeout|close  out|exempt|exmpet|exemept|southern stock|southernstock|southner stock)/g; 
 export default class TagContainer extends LightningElement {
@@ -35,7 +35,7 @@ export default class TagContainer extends LightningElement {
     searchTwo(){
         this.stock = this.template.querySelector('[data-value="searchInput"]').value.trim().toLowerCase().match(REGEX_STOCK_RES); 
         this.searchTerm = this.template.querySelector('[data-value="searchInput"]').value.toLowerCase().replace(REGEX_SOSL_RESERVED,'?').replace(REGEX_STOCK_RES,'').trim();
-     
+        console.log(1, this.stock, 2, this.searchTerm); 
         
         if(this.searchTerm.length<3){
             //add lwc alert here
@@ -44,9 +44,9 @@ export default class TagContainer extends LightningElement {
         const start = Date.now();
         if(this.stock){
             this.stock = spellCheck(this.stock[0])
-            this.searchQuery = searchString(this.searchTerm, this.stock);   
+            this.searchQuery = quickSearchString(this.searchTerm, this.stock);   
         }else{
-            this.searchQuery = searchString(this.searchTerm, this.stock)
+            this.searchQuery = quickSearchString(this.searchTerm, this.stock)
         }
        // console.log(this.searchQuery);
         
