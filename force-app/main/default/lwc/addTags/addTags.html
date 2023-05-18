@@ -4,7 +4,7 @@
             <div class='slds-col slds-size-2-of-8 slds-m-left_x-small'>
                 <lightning-input
                 name="enter-search"
-                label="Search for Tags"
+                label="Search for Labels"
                 type="search"
                 onchange={handleKeyUp}
                 
@@ -19,7 +19,7 @@
                                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
                             </div>
                             <template if:true={showResult} for:each={results} for:item="x" for:index="index">
-                                <li key={x.Id} data-recordid={x.Id} value={x.Name} role='option' class='hover' onclick={itemSelect}>
+                                <li key={x.Id} data-recordid={x.Id} data-name={x.Name} role='option' class='hover' onclick={itemSelect}>
                                     <span class="slds-media__body">
                                       <span class="slds-listbox__option-text_entity">
                                           <lightning-formatted-rich-text

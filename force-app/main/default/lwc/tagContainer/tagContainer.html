@@ -1,0 +1,55 @@
+<template>
+    <div class="searchGroup slds-grid slds-gutters">
+        <div class="slds-col slds-size_3-of-6">
+            <div onkeyup={handleKeys}>
+                <lightning-input type="text" 
+                    variant="standard" 
+                    name="name" 
+                    label="Search" 
+                    placeholder="type here..."
+                    data-value="searchInput"></lightning-input>
+            </div>
+        </div> 
+            <div class="slds-col slds-size_3-of-6 slds-m-top_large">
+                <lightning-button variant="brand" label="Search" 
+                        title="search" onclick={handleSearch}></lightning-button>
+                <lightning-button variant="success" label='Inv'
+                        title='check Inv' onclick={checkInv}></lightning-button>
+            </div>
+        </div>
+    
+        <template if:true={loaded}>
+            <lightning-layout multiple-rows="true">
+    
+                <template if:true={tagCards} for:each={tagCards} for:item="y" for:index="index">
+                    <lightning-layout-item key={y.Id} class='tagCards' size="12">
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_2-of-4 slds-m-left_x-small">
+                                <a href={y.url} target='_blank' class="searchLinks">
+                                    {y.name} 
+                                </a>
+                            </div>
+                            <div class="slds-col slds-size-1-of-4 ">
+                                <span class="stockStatus">
+                                    Score: <b>{y.score}</b>
+                                </span>
+                            </div>
+                            <div class="slds-col slds-size-1-of-4 ">
+                                <span>
+                                    <p class="stockStatus">tag: {y.tagDesc}</p>
+                                    <p class="stockStatus">status: {y.status}</p>    
+                                </span>
+                            </div>
+                            
+                        </div>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </template>
+        <template if:false={loaded}>
+            <div class="exampleHolder">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+    
+</template>

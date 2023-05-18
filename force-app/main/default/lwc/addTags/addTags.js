@@ -10,6 +10,8 @@ export default class AddTags extends LightningElement{
     @api tagpills = [];
     //back to flow
     @api searchLableList = [];
+    @api T; 
+    @api selIdList = [];
     @track  results = [];
     //display pills
     @track selPills = [];
@@ -58,7 +60,7 @@ wiredList(result){
      //item selected from dropdown
      itemSelect(evt){
         this.showResult = false;
-        this.labelName = evt.target.value;
+        this.labelName = evt.currentTarget.dataset.name;
         this.prodsId = evt.currentTarget.dataset.recordid
         this.selPills = [...this.selPills,{
             label: this.labelName,
@@ -85,12 +87,17 @@ wiredList(result){
             });
             return; 
         }
-        const lableIds = new Set(); 
+        const labels = new Set(); 
+        
         for(let i = 0; i < this.selPills.length; i++){
-            lableIds.add(this.selPills[i].Id);
+            let Search_Label__c = this.selPills[i].Id;
+            let Search_Slug_2__c = this.selPills[i].name;  
+            let o = {Search_Label__c ,Search_Slug_2__c }
+            labels.add(o);
         }
-        const out = [...lableIds]
-        const attributeChange = new FlowAttributeChangeEvent('searchLableList', out);
+        const out = [...labels]
+        
+        const attributeChange = new FlowAttributeChangeEvent('tagpills', out);
         this.dispatchEvent(attributeChange); 
         this.goNext()
     }
@@ -104,3 +111,4 @@ wiredList(result){
         return 'slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid';
     }
 }
+
