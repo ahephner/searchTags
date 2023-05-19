@@ -9,7 +9,7 @@ import PROD_FAM from '@salesforce/schema/Product2.Product_Family__c';
 
 const REGEX_SOSL_RESERVED = /(\?|&|\||!|\{|\}|\[|\]|\(|\)|\^|~|\*|:|"|\+|\\)/g;
 const REGEX_STOCK_RES = /(stock|sock|limited|limted|lmited|limit|close-out|close out|closeout|close  out|exempt|exmpet|exemept|southern stock|southernstock|southner stock)/g; 
-import {spellCheck, cpqSearchString} from 'c/tagHelper';
+import {spellCheck, cpqSearchString, uniqVals} from 'c/tagHelper';
 export default class ProdSearchTags extends LightningElement {
     @api recordId;
     //@api priceBookId; //will need to uncomment when switching 
@@ -110,8 +110,9 @@ export default class ProdSearchTags extends LightningElement {
                 console.log(this.searchQuery);
                 
                 let data = await searchTag({searchKey: this.searchQuery}) 
-                console.log(data)
-                this.prod = await data.map(item =>({
+                let once = await uniqVals(data);
+                console.log(once)
+                this.prod = await once.map(item =>({
                                     ...item, 
                                     rowVariant: item.Product__r.Temp_Unavailable__c ? 'border-filled' : 'brand',
                                     rowName: item.Product__r.Temp_Unavailable__c ? 'action:freeze_user' : 'action:new',

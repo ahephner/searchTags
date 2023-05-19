@@ -24,10 +24,17 @@ const cpqSearchString = (term, stock) =>{
 stock != null ? searchString += ' and Stock_Status__c  = \''+stock+'\' order by ATS_Score__c desc nulls last)' :searchString += ' order by ATS_Score__c desc nulls last)'; 
 return searchString; 
 }  
+
+const uniqVals = (arr, track = new Set())=>{
+  
+  return  arr.filter(({Product__c})=>track.has(Product__c)? false: track.add(Product__c))
+ 
+}
 export{
        spellCheck,
        quickSearchString,
-       cpqSearchString
+       cpqSearchString,
+       uniqVals
       }
 
       
