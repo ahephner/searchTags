@@ -2,5 +2,14 @@
 // You can execute queries in VS Code by selecting the
 //     query text and running the command:
 //     SFDX: Execute SOQL Query with Currently Selected Text
+// here are some SOSL queries trying to return a search_slug_2__c of red white blue
+//no
+//FIND {red and white and green} IN ALL FIELDS RETURNING Tag__c(id, Search_Slug_2__c, Tag_Description__c, Product__c, Product_Name__c, ATS_Score__c where product__r.IsActive = true) 
+//FIND {red white green} IN ALL FIELDS RETURNING Tag__c
+//yes
+//FIND {red and white and blue} IN ALL FIELDS RETURNING Tag__c
+//FIND {red white blue} IN ALL FIELDS RETURNING Tag__c
+
 
 SELECT Id, Name FROM Account
+
