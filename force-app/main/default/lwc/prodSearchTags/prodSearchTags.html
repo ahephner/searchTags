@@ -15,9 +15,11 @@
                 <lightning-card  variant="Narrow">
                     <h5><b>Number of Products Selected: {productsSelected}</b></h5>
                 <template if:false={loaded}>
-                    <lightning-spinner 
-                        alternative-text="Loading" 
-                        size="large"></lightning-spinner>
+                    <div class="slds-scrollable_y" style="height:40rem;width:100%">
+                        <lightning-spinner 
+                            alternative-text="Loading" 
+                            size="large"></lightning-spinner>
+                    </div>
                 </template>
                 <template if:true={loaded}> 
                     <div class="slds-grid">
@@ -30,7 +32,8 @@
                                                 data-value="searchInput"></lightning-input>
                             </div>
                         </div>
-                        <!-- <div class='slds-col slds-size_2-of-8'>
+                         <!-- <div class='slds-col slds-size_2-of-8'>
+                          
                             <lightning-combobox
                                 name="prodFamily"
                                 label="Product Family"
@@ -39,7 +42,7 @@
                                 options={pfValues.data.values}
                                 onchange={pfChange} ></lightning-combobox>
                         </div> 
-                        <div class='slds-col slds-size_2-of-8'>
+                       <div class='slds-col slds-size_2-of-8'>
                             <lightning-combobox
                             name="cat"
                             label="Category"
@@ -47,7 +50,7 @@
                             placeholder="Product Category"
                             options={subCatValues.data.values}
                             onchange={catChange} ></lightning-combobox>
-                        </div> -->
+                        </div>  -->
                         <div class='slds-col slds-size_1-of-8 slds-m-top_large slds-m-left_small'>   
                             <lightning-button variant="brand" label="Search" title="Search" onclick={handleSearch}></lightning-button>
                         </div>
