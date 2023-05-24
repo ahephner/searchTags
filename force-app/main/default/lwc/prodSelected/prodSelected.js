@@ -36,6 +36,7 @@ export default class ProdSelected extends LightningElement {
     productId; 
     productCode;
     pbId;
+    singleProduct; 
     unitCost;
     unitWeight;
     fPrice; 
@@ -139,17 +140,16 @@ export default class ProdSelected extends LightningElement {
         
     }
 
-    //fired from search check if the product is already on the order if not set the id and call the function to load it's info. 
-    handleTagProduct(mess){
+    //fired from search check if the product is already on the order if not set the id and call the function to load it's info.  
+   handleTagProduct(mess){
         let selectedPC = mess.detail[1]
         let alreadyThere = this.selection.findIndex(prod => prod.ProductCode === selectedPC);
         if(alreadyThere<0){
             this.productId = mess.detail[0]
-            //this.handleNewProd();
-            let data = selectedProducts({productIds: this.productId, priceBookId: this.pbId})
-            console.log(data)
+            this.handleNewProd();  
         }
     }
+
     unsubscribeToMessageChannel() {
         unsubscribe(this.subscription);
         this.subscription = null;
@@ -173,10 +173,27 @@ export default class ProdSelected extends LightningElement {
                 
             }
         }
+        setFieldValues(mess){
+            this.productName = mess.Product2.Name;
+            this.productId = mess.Product2Id; 
+            this.pbeId = mess.Id;
+            this.unitCost = mess.Product_Cost__c;
+            this.unitWeight = mess.Product2.Ship_Weight__c;
+            this.agency = mess.Agency_Product__c;
+            this.fPrice = mess.Floor_Price__c;
+            this.levelOne = mess.Level_1_UserView__c;
+            this.levelOneMargin = mess.Level_1_Margin__c;
+            this.levelTwo = mess.Level_2_UserView__c;  
+            this.levelTwoMargin = mess.Level_2_Margin__c; 
+            this.companyLastPaid = mess.Product2.Last_Purchase_Price__c;  
+            this.prodFound = true;
+        }
     async handleNewProd(){
         //get last paid only works on new adding product
         let totalPrice;
         let totalQty; 
+        let data1 = await selectedProducts({productIds: this.productId, priceBookId: this.pbId})
+        this.setFieldValues(data1); 
         this.newProd = await getLastPaid({accountID: this.accountId, Code: this.productCode});
         this.invCount = await getInventory({locId: this.warehouse, pId: this.productId });
         this.lastQuote = await getLastQuote({accountID: this.accountId, Code: this.productCode, opportunityId:this.recordId});
