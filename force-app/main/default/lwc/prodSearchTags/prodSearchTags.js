@@ -41,7 +41,12 @@ export default class ProdSearchTags extends LightningElement {
         cellAttributes: {
             style: 'transform: scale(0.75)'}
         },
-        {label: 'Name', fieldName:'Name', cellAttributes:{alignment:'left'}, "initialWidth": 625},
+        //{label: 'Name', fieldName:'Name', cellAttributes:{alignment:'left'}, "initialWidth": 625},
+        {label:'Name', type:'customName',
+        typeAttributes:{prodName:{fieldName:'Name'},
+                        atsScore:{fieldName: 'Score'}
+                        },
+        },
         {label: 'Code', fieldName:'ProductCode', cellAttributes:{alignment:'center'}, "initialWidth": 137},
         {label: 'Status', fieldName:'Status', cellAttributes:{alignment:'center'}, sortable: "true"},
         {label:'Floor Type', fieldName:'Floor', cellAttributes:{alignment:'center'}},
@@ -124,6 +129,7 @@ export default class ProdSearchTags extends LightningElement {
                 //console.log(this.searchQuery);
                 
                 let data = await searchTag({searchKey: this.searchQuery}) 
+                console.log(data)
                 let once = data.length> 1 ? await uniqVals(data) : data;
                 this.prod = await once.map(item =>({
                                     ...item, 
@@ -135,7 +141,8 @@ export default class ProdSearchTags extends LightningElement {
                                     Status: item.Stock_Status__c,
                                     Floor_Price__c: item.Floor_Price__c,
                                     Floor: item.Product__r.Floor_Type__c,
-                                    qtyOnHand: item.Product__r.Total_Product_Items__c
+                                    qtyOnHand: item.Product__r.Total_Product_Items__c,
+                                    Score: item.ATS_Score__c
                 }))
                 this.loaded = true;
                 this.error = undefined;
@@ -144,6 +151,9 @@ export default class ProdSearchTags extends LightningElement {
             }
             @track selectedId = [];
 //Handles Row action for adding removing products from search
+            quickCheck(x){
+                console.log(x.detail.row.Product_Code__c)
+            }
             handleRowAction(e){
                 const rowAction = e.detail.row.rowValue;
                 const rowProduct = e.detail.row.Product__c; 

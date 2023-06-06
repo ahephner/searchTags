@@ -58,7 +58,7 @@
                     <div class="slds-scrollable_y" style="height:40rem;width:100%">
                     <div class='slds-grid'>
                         <div class='slds-col'>
-                            <lightning-datatable
+                            <!-- <lightning-datatable
                                 key-field="Id"
                                 data={prod}
                                 hide-checkbox-column
@@ -67,7 +67,13 @@
                                 sorted-direction={sortDirection}
                                 onsort={handleSortdata}
                                 onrowaction={handleRowAction}>
-                            </lightning-datatable>
+                            </lightning-datatable> -->
+                            <c-data-cell
+                            key-field="Id"
+                            data={prod}
+                            hide-checkbox-column
+                            columns={columnsList}
+                            onrowaction={quickCheck}></c-data-cell>
                         </div>
                         </div>
                     </div>             
