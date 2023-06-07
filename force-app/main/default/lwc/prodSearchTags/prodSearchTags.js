@@ -1,5 +1,6 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import searchTag from '@salesforce/apex/quickPriceSearch.cpqSearchTag';
+//import selectedProducts from '@salesforce/apex/quickPriceSearch.selectedProducts';
 import { MessageContext, publish} from 'lightning/messageService';
 import Opportunity_Builder from '@salesforce/messageChannel/Opportunity_Builder__c';
 import { getObjectInfo, getPicklistValues} from 'lightning/uiObjectInfoApi';
@@ -14,9 +15,9 @@ const REGEX_COMMA = /(,)/g;
 import {spellCheck, cpqSearchString, uniqVals} from 'c/tagHelper';
 export default class ProdSearchTags extends LightningElement {
     @api recordId;
-    //@api priceBookId; //will need to uncomment when switching 
-    @track openPricing = true;
-    loaded = true; 
+    @api priceBookId; //will need to uncomment when switching 
+    @track openPricing =false;
+    loaded = false; 
     @track prod = [];
     error; 
     searchKey;
@@ -40,7 +41,13 @@ export default class ProdSearchTags extends LightningElement {
         cellAttributes: {
             style: 'transform: scale(0.75)'}
         },
-        {label: 'Name', fieldName:'Name', cellAttributes:{alignment:'left'}, "initialWidth": 625},
+        //{label: 'Name', fieldName:'Name', cellAttributes:{alignment:'left'}, "initialWidth": 625},
+        {label:'Name', type:'customName',
+        typeAttributes:{prodName:{fieldName:'Name'},
+                        atsScore:{fieldName: 'Score'},
+                        classValue:{fieldName: 'classV'}
+                        },
+        },
         {label: 'Code', fieldName:'ProductCode', cellAttributes:{alignment:'center'}, "initialWidth": 137},
         {label: 'Status', fieldName:'Status', cellAttributes:{alignment:'center'}, sortable: "true"},
         {label:'Floor Type', fieldName:'Floor', cellAttributes:{alignment:'center'}},
@@ -79,11 +86,22 @@ export default class ProdSearchTags extends LightningElement {
           })
           pfValues;
 
+          pfChange(event){
+            this.pf = event.detail.value; 
+            //console.log('pf '+this.pf);
+            
+        }
+    
+        catChange(e){
+            this.cat = e.detail.value; 
+            //console.log('cat '+this.cat);
+        }
+
           //handle enter key tagged. maybe change to this.searhKey === undefined
           handleKeys(evt){
             let eventKey = evt.keyCode === 13;
               if(eventKey){
-                  console.log('enter')
+                  //console.log('enter')
                   this.search();  
               }
             }
@@ -109,11 +127,12 @@ export default class ProdSearchTags extends LightningElement {
                 }else{
                     this.searchQuery = cpqSearchString(this.searchTerm, this.stock); 
                 }
-                console.log(this.searchQuery);
+                //console.log(this.searchQuery);
                 
                 let data = await searchTag({searchKey: this.searchQuery}) 
+                console.log(data)
                 let once = data.length> 1 ? await uniqVals(data) : data;
-                this.prod = await once.map(item =>({
+                this.prod = await once.map((item, index) =>({
                                     ...item, 
                                     rowVariant: item.Product__r.Temp_Unavailable__c ? 'border-filled' : 'brand',
                                     rowName: item.Product__r.Temp_Unavailable__c ? 'action:freeze_user' : 'action:new',
@@ -123,10 +142,53 @@ export default class ProdSearchTags extends LightningElement {
                                     Status: item.Stock_Status__c,
                                     Floor_Price__c: item.Floor_Price__c,
                                     Floor: item.Product__r.Floor_Type__c,
-                                    qtyOnHand: item.Product__r.Total_Product_Items__c
+                                    qtyOnHand: item.Product__r.Total_Product_Items__c,
+                                    Score: item.ATS_Score__c,
+                                    classV: index <= 3 ? 'topRow' : 'innerInfo'
+
                 }))
                 this.loaded = true;
                 this.error = undefined;
+                
+                
+            }
+            @track selectedId = [];
+//Handles Row action for adding removing products from search
+            quickCheck(x){
+                console.log(x.detail.row.Product_Code__c)
+            }
+            handleRowAction(e){
+                const rowAction = e.detail.row.rowValue;
+                const rowProduct = e.detail.row.Product__c; 
+                const rowCode = e.detail.row.ProductCode; 
+                const rowId = e.detail.row.Id; 
+                //get that row button so we can update it  
+                let index = this.prod.find((item) => item.Id === rowId);
+
+                if(rowAction === 'unavailable'){
+                    //need to update
+                    alert('Sorry '+index.Product__r.Temp_Mess__c)
+                }else if(rowAction === 'Add'){
+                    this.productsSelected ++; 
+                    this.dispatchEvent(new CustomEvent('addprod',{
+                        detail: [rowProduct,rowCode ]
+                    }))
+                        //update the button
+                    index.rowVariant = 'success';
+                    index.rowValue = 'Remove'
+                    index.rowName = 'action:check';
+                    this.prod= [...this.prod]
+                }else if(rowAction === 'Remove'){
+                    this.productsSelected --;
+
+                    this.dispatchEvent(new CustomEvent('removeprod', {
+                        detail: rowProduct
+                    }))
+                    index.rowVariant = 'brand';
+                    index.rowValue = 'Add'
+                    index.rowName = 'action:new';
+                    this.prod= [...this.prod]
+                }
             }
 //Handle sort features
           handleSortdata(event) {
