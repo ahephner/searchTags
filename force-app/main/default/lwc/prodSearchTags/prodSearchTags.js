@@ -44,7 +44,8 @@ export default class ProdSearchTags extends LightningElement {
         //{label: 'Name', fieldName:'Name', cellAttributes:{alignment:'left'}, "initialWidth": 625},
         {label:'Name', type:'customName',
         typeAttributes:{prodName:{fieldName:'Name'},
-                        atsScore:{fieldName: 'Score'}
+                        atsScore:{fieldName: 'Score'},
+                        classValue:{fieldName: 'classV'}
                         },
         },
         {label: 'Code', fieldName:'ProductCode', cellAttributes:{alignment:'center'}, "initialWidth": 137},
@@ -131,7 +132,7 @@ export default class ProdSearchTags extends LightningElement {
                 let data = await searchTag({searchKey: this.searchQuery}) 
                 console.log(data)
                 let once = data.length> 1 ? await uniqVals(data) : data;
-                this.prod = await once.map(item =>({
+                this.prod = await once.map((item, index) =>({
                                     ...item, 
                                     rowVariant: item.Product__r.Temp_Unavailable__c ? 'border-filled' : 'brand',
                                     rowName: item.Product__r.Temp_Unavailable__c ? 'action:freeze_user' : 'action:new',
@@ -142,7 +143,9 @@ export default class ProdSearchTags extends LightningElement {
                                     Floor_Price__c: item.Floor_Price__c,
                                     Floor: item.Product__r.Floor_Type__c,
                                     qtyOnHand: item.Product__r.Total_Product_Items__c,
-                                    Score: item.ATS_Score__c
+                                    Score: item.ATS_Score__c,
+                                    classV: index <= 3 ? 'topRow' : 'innerInfo'
+
                 }))
                 this.loaded = true;
                 this.error = undefined;
